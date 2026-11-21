@@ -1,11 +1,11 @@
 # Deploy to Google Cloud (free tier)
 
-Runs every minute on Cloud Run jobs, triggered by Cloud Scheduler. Replace `PROJECT_ID`. **Set a budget alert first.**
+Runs every 3 minutes on Cloud Run jobs, triggered by Cloud Scheduler. Replace `PROJECT_ID`. **Set a budget alert first.**
 
 ```bash
 gcloud config set project PROJECT_ID
 gcloud services enable run.googleapis.com cloudscheduler.googleapis.com pubsub.googleapis.com \
-  bigquery.googleapis.com firestore.googleapis.com artifactregistry.googleapis.com cloudbuild.googleapis.com
+  bigquery.googleapis.com firestore.googleapis.com secretmanager.googleapis.com artifactregistry.googleapis.com cloudbuild.googleapis.com
 ```
 
 ## 1. Storage: BigQuery for history, Firestore for "last known state"
@@ -32,6 +32,9 @@ bq add-iam-policy-binding --member="serviceAccount:service-${PROJECT_NUMBER}@gcp
 gcloud pubsub subscriptions create uptime-checks-to-bq --topic uptime-checks \
   --bigquery-table=PROJECT_ID:uptime.checks --use-table-schema \
   --dead-letter-topic=uptime-checks-deadletter --max-delivery-attempts=5
+# Let Pub/Sub forward rejected messages to the dead-letter topic
+gcloud pubsub topics add-iam-policy-binding uptime-checks-deadletter   --member="serviceAccount:service-${PROJECT_NUMBER}@gcp-sa-pubsub.iam.gserviceaccount.com" --role=roles/pubsub.publisher
+gcloud pubsub subscriptions add-iam-policy-binding uptime-checks-to-bq   --member="serviceAccount:service-${PROJECT_NUMBER}@gcp-sa-pubsub.iam.gserviceaccount.com" --role=roles/pubsub.subscriber
 ```
 
 ## 3. Service account for the job
@@ -66,7 +69,9 @@ gcloud run jobs deploy uptime-check --source . --region asia-south1 \
 gcloud run jobs execute uptime-check --region asia-south1 --wait   # test one run
 ```
 
-## 6. Run it every minute with Cloud Scheduler
+## 6. Run it every 3 minutes with Cloud Scheduler
+
+Every 3 minutes (~14,400 runs/month) stays inside Cloud Run's free CPU allowance; every minute would not.
 
 ```bash
 gcloud scheduler jobs create http uptime-every-minute --location asia-south1 \
