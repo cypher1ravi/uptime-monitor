@@ -1,6 +1,12 @@
-import type { Site } from "./config.ts";
+export type Site = {
+  name: string;
+  url: string;
+  /** Expected HTTP status. Default: any status below 400 counts as up. */
+  expectStatus?: number;
+  /** Optional text that must appear in the response body. */
+  mustContain?: string;
+};
 
-/** One row in BigQuery (see infra/bigquery-schema.json). */
 export type CheckResult = {
   ts: string;
   site: string;
@@ -14,16 +20,16 @@ export type CheckResult = {
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 async function checkOnce(site: Site, timeoutMs: number): Promise<CheckResult> {
-  const started = performance.now();
+  const started = Date.now();
   const base = { ts: new Date().toISOString(), site: site.name, url: site.url };
   try {
     const res = await fetch(site.url, {
       redirect: "follow",
       signal: AbortSignal.timeout(timeoutMs),
-      headers: { "user-agent": "uptime-monitor/0.1 (+https://ravindrachaubey.vercel.app)" },
+      headers: { "user-agent": "uptime-monitor/0.2 (+https://github.com/cypher1ravi/uptime-monitor)" },
     });
     const body = site.mustContain ? await res.text() : (await res.body?.cancel(), "");
-    const response_ms = Math.round(performance.now() - started);
+    const response_ms = Date.now() - started;
 
     const statusOk = site.expectStatus ? res.status === site.expectStatus : res.status < 400;
     const textOk = !site.mustContain || body.includes(site.mustContain);
@@ -32,7 +38,7 @@ async function checkOnce(site: Site, timeoutMs: number): Promise<CheckResult> {
     return { ...base, up, status_code: res.status, response_ms, error };
   } catch (err) {
     const e = err as Error;
-    const error = e.name === "TimeoutError" ? `timeout after ${timeoutMs} ms` : e.message;
+    const error = e.name === "TimeoutError" || e.name === "AbortError" ? `timeout after ${timeoutMs} ms` : e.message;
     return { ...base, up: false, status_code: null, response_ms: null, error };
   }
 }

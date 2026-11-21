@@ -1,25 +1,26 @@
 {
   "name": "uptime-monitor",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
-  "description": "Uptime monitor: Cloud Scheduler -> Cloud Run job -> Pub/Sub -> BigQuery, Telegram alerts on state changes",
+  "description": "Uptime monitor with a public status page and Telegram alerts on Cloudflare Workers + D1 (free tier)",
   "type": "module",
   "engines": {
     "node": "22.x || 24.x"
   },
   "scripts": {
-    "check": "node --env-file-if-exists=.env src/run.ts",
-    "dev": "node --env-file-if-exists=.env src/dev-loop.ts",
-    "start": "node src/run.ts",
+    "dev": "wrangler dev --test-scheduled",
+    "deploy": "wrangler deploy",
+    "db:migrate:local": "wrangler d1 migrations apply uptime --local",
+    "db:migrate:remote": "wrangler d1 migrations apply uptime --remote",
     "test": "node --test \"test/**/*.test.ts\"",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@google-cloud/firestore": "^9.4.1",
-    "@google-cloud/pubsub": "^6.4.1"
+    "hono": "^4.13.19"
   },
   "devDependencies": {
-    "@types/node": "^24",
-    "typescript": "^5"
+    "@cloudflare/workers-types": "^5.20261121.1",
+    "typescript": "^5",
+    "wrangler": "4.158.0"
   }
 }
