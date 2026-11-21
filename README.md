@@ -11,6 +11,8 @@ Visitors ──▶ GET /          server-rendered status page (30-day uptime bar
              GET /api/status JSON for other dashboards
 ```
 
+> Full project notes (architecture, decisions, operations): [docs/CONTEXT.md](docs/CONTEXT.md)
+
 ## Features
 - Parallel HTTP checks with timeout, expected status code and optional "must contain" text
 - **No false alarms**: a failed check is retried once before a site counts as down
