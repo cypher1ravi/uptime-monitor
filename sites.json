@@ -1,5 +1,20 @@
 [
-  { "name": "Portfolio", "url": "https://ravindrachaubey.vercel.app/" },
-  { "name": "Folify", "url": "https://folify-gen.vercel.app/" },
-  { "name": "Portfolio sitemap", "url": "https://ravindrachaubey.vercel.app/sitemap.xml", "expectStatus": 200 }
+  {
+    "name": "Portfolio",
+    "url": "https://ravindrachaubey.vercel.app/"
+  },
+  {
+    "name": "Folify",
+    "url": "https://folify-gen.vercel.app/"
+  },
+  {
+    "name": "Portfolio sitemap",
+    "url": "https://ravindrachaubey.vercel.app/sitemap.xml",
+    "expectStatus": 200
+  },
+  {
+    "name": "Pulse Analytics API",
+    "url": "https://pulse-analytics.ravindrachaubey.workers.dev/healthz",
+    "mustContain": "\"ok\":true"
+  }
 ]
