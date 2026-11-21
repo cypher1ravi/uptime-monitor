@@ -1,0 +1,25 @@
+{
+  "name": "uptime-monitor",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Uptime monitor: Cloud Scheduler -> Cloud Run job -> Pub/Sub -> BigQuery, Telegram alerts on state changes",
+  "type": "module",
+  "engines": {
+    "node": "22.x || 24.x"
+  },
+  "scripts": {
+    "check": "node --env-file-if-exists=.env src/run.ts",
+    "dev": "node --env-file-if-exists=.env src/dev-loop.ts",
+    "start": "node src/run.ts",
+    "test": "node --test \"test/**/*.test.ts\"",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@google-cloud/firestore": "^9.4.1",
+    "@google-cloud/pubsub": "^6.4.1"
+  },
+  "devDependencies": {
+    "@types/node": "^24",
+    "typescript": "^5"
+  }
+}
