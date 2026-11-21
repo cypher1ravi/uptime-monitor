@@ -1,9 +1,9 @@
 # Uptime Monitor
 
-Checks my websites every minute, keeps the full history in BigQuery and sends a Telegram alert when a site goes down or comes back. Serverless on Google Cloud's free tier.
+Checks my websites every 3 minutes, keeps the full history in BigQuery and sends a Telegram alert when a site goes down or comes back. Serverless on Google Cloud's free tier.
 
 ```
-Cloud Scheduler ──(every minute)──▶ Cloud Run job ──▶ Pub/Sub ──▶ BigQuery (history, uptime %)
+Cloud Scheduler ──(every 3 min)──▶ Cloud Run job ──▶ Pub/Sub ──▶ BigQuery (history, uptime %)
                                       │  check all sites in parallel
                                       │  retry once before calling it "down"
                                       ├──▶ Firestore (last known state)
@@ -23,7 +23,7 @@ Cloud Scheduler ──(every minute)──▶ Cloud Run job ──▶ Pub/Sub �
 npm install
 cp .env.example .env
 npm run check        # one run
-npm run dev          # every minute, like production
+npm run dev          # repeats every minute locally
 npm test
 ```
 

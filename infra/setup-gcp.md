@@ -74,8 +74,8 @@ gcloud run jobs execute uptime-check --region asia-south1 --wait   # test one ru
 Every 3 minutes (~14,400 runs/month) stays inside Cloud Run's free CPU allowance; every minute would not.
 
 ```bash
-gcloud scheduler jobs create http uptime-every-minute --location asia-south1 \
-  --schedule "* * * * *" --http-method POST \
+gcloud scheduler jobs create http uptime-every-3-min --location asia-south1 \
+  --schedule "*/3 * * * *" --http-method POST \
   --uri "https://run.googleapis.com/v2/projects/PROJECT_ID/locations/asia-south1/jobs/uptime-check:run" \
   --oauth-service-account-email $SA
 ```

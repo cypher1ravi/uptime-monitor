@@ -1,5 +1,5 @@
 // One monitoring run: check every site, store results, alert on changes.
-// Runs as a Cloud Run job triggered by Cloud Scheduler every minute.
+// Runs as a Cloud Run job triggered by Cloud Scheduler every 3 minutes.
 import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { checkSite } from "./check.ts";

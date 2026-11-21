@@ -23,7 +23,7 @@ class FileStateStore implements StateStore {
 }
 
 /**
- * Production: one Firestore document. Read once per run (1,440 reads/day for 1-minute checks),
+ * Production: one Firestore document. Read once per run (480 reads/day for 3-minute checks),
  * written only when something changes, well inside Firestore's free daily quota.
  */
 class FirestoreStateStore implements StateStore {
